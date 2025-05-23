@@ -1,0 +1,207 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: 'Amaze x ZORT Adapter API'
+  description: The Amaze x ZORT Adapter API serves as a middleware to synchronize data between Amaze (a marketplace platform) and ZORT (an order and inventory management system). 
+
+servers:
+  - url: https://api.example.com/api/v1
+    description: Example server
+
+paths:
+  /connect/zort:
+    post:
+      summary: Connect to ZORT
+      description: Establishes a connection between a shop and ZORT using provided API credentials.
+      tags:
+        - Authentication
+      parameters:
+        - in: header
+          name: x-shop-id
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the shop requesting the connection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZortConnectRequest'
+      responses:
+        '200':
+          description: Adapter processed the request. Check `code` in response body for actual outcome, including connection issues with ZORT.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZortConnectResponse'
+              examples:
+                success:
+                  summary: Successful connection to ZORT
+                  value:
+                    code: "2000"
+                    message: "Success"
+                unauthorized:
+                  summary: Invalid credentials for ZORT
+                  value:
+                    code: "4001"
+                    message: "Unauthorized"
+                timeout:
+                  summary: Timeout when calling ZORT
+                  value:
+                    code: "5001"
+                    message: "Timeout"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /product/sync:
+    post:
+      summary: Sync product data
+      description: |
+        Synchronizes product data. If fullsync is true, performs full synchronization.
+        Returns status of sync operation in the response body.
+      tags:
+        - Product
+      parameters:
+      - in: header
+        name: x-shop-id
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the shop requesting the product sync
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductSyncRequest'
+      responses:
+        '200':
+          description: Sync processed successfully. Check `code` and `data` for results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSyncResponse'
+              examples:
+                success:
+                  summary: Successful product sync
+                  value:
+                    code: "2000"
+                    message: "Success"
+                    data:
+                      total: 35
+                      created: 12
+                      updated: 23
+                      skipped: 0
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  schemas:
+    ZortConnectRequest:
+      type: object
+      required:
+        - storename
+        - apikey
+        - apisecret
+      properties:
+        storename:
+          type: string
+          example: MyZortStore
+        apikey:
+          type: string
+          example: abc123xyz
+        apisecret:
+          type: string
+          example: secret456def
+
+    ZortConnectResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Internal response code
+          enum: [2000, 4001, 5001]
+          example: "2000"
+        message:
+          type: string
+          description: Message describing the result
+          example: Success
+
+    ProductSyncRequest:
+      type: object
+      required:
+        - fullsync
+      properties:
+        fullsync:
+          type: boolean
+          example: false
+
+    ProductSyncResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Internal response code
+          example: "2000"
+        message:
+          type: string
+          description: Message describing the sync result
+          example: Success
+        data:
+          type: object
+          description: Summary of sync results
+          properties:
+            total:
+              type: integer
+              example: 35
+            created:
+              type: integer
+              example: 12
+            updated:
+              type: integer
+              example: 23
+            skipped:
+              type: integer
+              example: 0
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Bad Request - client sent invalid data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            badrequest:
+              summary: Bad Request
+              value:
+                code: "4000"
+                message: "Bad Request"
+
+    InternalError:
+      description: Internal Server Error - unexpected failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            unknownerror:
+              summary: Unknown Error
+              value:
+                code: "5000"
+                message: "Unknown Error"
+
+
