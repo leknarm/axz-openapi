@@ -77,6 +77,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProductSyncRequest'
+            examples:
+              individual:
+                summary: Sync individual products
+                value:
+                  sync: individual
+                  product_ids:
+                    - "8823618273622"
+              full:
+                summary: Full sync (all products)
+                value:
+                  sync: full
+                  product_ids: []
       responses:
         '200':
           description: Sync processed successfully. Check `code` and `data` for results.
@@ -135,11 +147,21 @@ components:
     ProductSyncRequest:
       type: object
       required:
-        - fullsync
+        - sync
+        - product_ids
       properties:
-        fullsync:
-          type: boolean
-          example: false
+        sync:
+          type: string
+          description: Sync mode (either 'full' or 'individual')
+          enum: [full, individual]
+          example: individual
+        product_ids:
+          type: array
+          description: List of product IDs to sync
+          items:
+            type: string
+          example:
+            - "8823618273622"
 
     ProductSyncResponse:
       type: object
@@ -168,6 +190,12 @@ components:
             skipped:
               type: integer
               example: 0
+        details:
+          type: array
+          description: Optional details about the sync operation
+          items:
+            type: object
+          example: []
 
     ErrorResponse:
       type: object
