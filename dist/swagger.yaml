@@ -112,6 +112,87 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 
+  /stock/update:
+    post:
+      summary: Update product stock
+      description: Updates the stock and available stock for a product by SKU.
+      tags:
+        - Stock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockUpdateRequest'
+            examples:
+              update:
+                summary: Update stock for a product
+                value:
+                  id: 1234
+                  sku: "P0001"
+                  name: "Product1"
+                  stock: "20.00"
+                  availablestock: "10.00"
+      responses:
+        '200':
+          description: Stock updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockUpdateResponse'
+              examples:
+                success:
+                  summary: Successful stock update
+                  value:
+                    code: "0000"
+                    message: "Success"
+                    data:
+                      sku: "P0001"
+                      stock: 20
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /order:
+    post:
+      summary: Create order to ZORT by order ID from Amaze
+      description: |
+        Creates an order in ZORT using the order ID from Amaze. Returns the order number if successful.
+        This endpoint is used to create orders in ZORT based on the order ID received from Amaze.
+      tags:
+        - Order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+            examples:
+              example:
+                summary: Example order request
+                value:
+                  order_id: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
+      responses:
+        '200':
+          description: Order number found successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+              examples:
+                success:
+                  summary: Successful order lookup
+                  value:
+                    code: "0000"
+                    message: "Success"
+                    data:
+                      order_number: "zz-ord-00001"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
 components:
   schemas:
     ZortConnectRequest:
@@ -196,6 +277,75 @@ components:
           items:
             type: object
           example: []
+
+    StockUpdateRequest:
+      type: object
+      required:
+        - id
+        - sku
+        - name
+        - stock
+        - availablestock
+      properties:
+        id:
+          type: integer
+          example: 1234
+        sku:
+          type: string
+          example: P0001
+        name:
+          type: string
+          example: Product1
+        stock:
+          type: string
+          example: "20.00"
+        availablestock:
+          type: string
+          example: "10.00"
+
+    StockUpdateResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "0000"
+        message:
+          type: string
+          example: Success
+        data:
+          type: object
+          properties:
+            sku:
+              type: string
+              example: P0001
+            stock:
+              type: integer
+              example: 20
+
+    OrderRequest:
+      type: object
+      required:
+        - order_id
+      properties:
+        order_id:
+          type: string
+          example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
+
+    OrderResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "0000"
+        message:
+          type: string
+          example: Success
+        data:
+          type: object
+          properties:
+            order_number:
+              type: string
+              example: zz-ord-00001
 
     ErrorResponse:
       type: object
