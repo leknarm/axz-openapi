@@ -102,11 +102,6 @@ paths:
                   value:
                     code: "2000"
                     message: "Success"
-                    data:
-                      total: 35
-                      created: 12
-                      updated: 23
-                      skipped: 0
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -186,8 +181,6 @@ paths:
                   value:
                     code: "0000"
                     message: "Success"
-                    data:
-                      order_number: "zz-ord-00001"
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -255,28 +248,6 @@ components:
           type: string
           description: Message describing the sync result
           example: Success
-        data:
-          type: object
-          description: Summary of sync results
-          properties:
-            total:
-              type: integer
-              example: 35
-            created:
-              type: integer
-              example: 12
-            updated:
-              type: integer
-              example: 23
-            skipped:
-              type: integer
-              example: 0
-        details:
-          type: array
-          description: Optional details about the sync operation
-          items:
-            type: object
-          example: []
 
     StockUpdateRequest:
       type: object
@@ -340,12 +311,6 @@ components:
         message:
           type: string
           example: Success
-        data:
-          type: object
-          properties:
-            order_number:
-              type: string
-              example: zz-ord-00001
 
     ErrorResponse:
       type: object
