@@ -151,10 +151,8 @@ paths:
 
   /order:
     post:
-      summary: Create order to ZORT by order ID from Amaze
-      description: |
-        Creates an order in ZORT using the order ID from Amaze. Returns the order number if successful.
-        This endpoint is used to create orders in ZORT based on the order ID received from Amaze.
+      summary: Get order number by order ID
+      description: Returns the order number for a given order ID.
       tags:
         - Order
       requestBody:
@@ -181,6 +179,42 @@ paths:
                   value:
                     code: "0000"
                     message: "Success"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    put:
+      summary: Update order status
+      description: Updates the status of an order by order ID.
+      tags:
+        - Order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderUpdateRequest'
+            examples:
+              example:
+                summary: Example order status update
+                value:
+                  order_id: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
+                  status: "ready_to_ship"
+      responses:
+        '200':
+          description: Order status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+              examples:
+                success:
+                  summary: Successful order status update
+                  value:
+                    code: "0000"
+                    message: "Success"
+                    data:
+                      order_number: "zz-ord-00001"
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -301,6 +335,19 @@ components:
         order_id:
           type: string
           example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
+
+    OrderUpdateRequest:
+      type: object
+      required:
+        - order_id
+        - status
+      properties:
+        order_id:
+          type: string
+          example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
+        status:
+          type: string
+          example: ready_to_ship
 
     OrderResponse:
       type: object
