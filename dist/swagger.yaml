@@ -102,6 +102,259 @@ paths:
                   value:
                     code: "2000"
                     message: "Success"
+                    data:
+                      job_id: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /job/product:
+    get:
+      summary: Get job status for product sync
+      description: |
+        Get the status of a product sync job.
+      tags:
+        - Job
+      parameters:
+      - in: header
+        name: x-shop-id
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the shop requesting the product sync
+      - in: query
+        name: job_id
+        required: false
+        schema:
+          type: string
+        description: Optional job ID to check specific job status
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          default: 1
+        description: The number of the page to retrieve (for paginated results)
+      - in: query
+        name: size
+        required: false
+        schema:
+          type: integer
+          default: 10
+        description: The number of items per page (for paginated results)
+      responses:
+        '200':
+          description: Get list of job successfully. Check `code` and `data` for results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProductSyncJobResponse'
+              examples:
+                success:
+                  summary: Get list of job successfully
+                  value:
+                    code: "0000"
+                    message: "Success"
+                    data:
+                      - job_id: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
+                        status: "in_progress"
+                        total: 10
+                        pending: 4
+                        in_progress: 2
+                        failed: 1
+                        completed: 3
+                        details:
+                          - product_id: "527f52f2-8e35-4431-bbd7-25273374e4b2"
+                            status: "failed"
+                            total: 2
+                            pending: 0
+                            in_progress: 0
+                            failed: 2
+                            completed: 0
+                            model_list:
+                              - product_number: "P0001"
+                                message: "error while sync to ZORT"
+                              - product_number: "P0002"
+                                message: "timeout"
+                        message: ""
+                      - job_id: "194c5575-9371-4731-9863-247ef6598fe0"
+                        status: "completed"
+                        total: 3
+                        pending: 0
+                        in_progress: 0
+                        failed: 0
+                        completed: 3
+                        message: ""
+                      - job_id: "7a8b354b-c8eb-422c-9f8e-132eed1807a3"
+                        status: "in_progress"
+                        total: 7
+                        pending: 2
+                        in_progress: 2
+                        failed: 0
+                        completed: 3
+                        message: ""
+                    page: 1
+                    total_items: 100
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    put:      
+      summary: Submit job manually for product sync.
+      description: |
+        Submit job_id manually for product sync if not unsuccessful.
+      tags:
+        - Job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepairJobProductSyncRequest'
+            examples:
+              example::
+                summary: Job submission example
+                value:
+                  job_id: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
+      responses:
+        '200':
+          description: Job submitted successfully. Check `code` and `data` for results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+              examples:
+                success:
+                  summary: Successful job submission
+                  value:
+                    code: "2000"
+                    message: "Success"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /job/order:
+    get:
+      summary: Get job status for order sync
+      description: |
+        Get the status of a order sync job.
+      tags:
+        - Job
+      parameters:
+      - in: header
+        name: x-shop-id
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the shop requesting the order sync
+      - in: query
+        name: job_id
+        required: false
+        schema:
+          type: string
+        description: Optional job ID to check specific job status
+      - in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          default: 1
+        description: The number of the page to retrieve (for paginated results)
+      - in: query
+        name: size
+        required: false
+        schema:
+          type: integer
+          default: 10
+        description: The number of items per page (for paginated results)
+      responses:
+        '200':
+          description: Get list of job successfully. Check `code` and `data` for results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetOrderJobResponse'
+              examples:
+                success:
+                  summary: Get list of job successfully
+                  value:
+                    code: "0000"
+                    message: "Success"
+                    data:
+                      - job_id: "29034f2e-1a14-44b5-8219-e21812d63335"
+                        status: "in_progress"
+                        order_sync_type: "create"
+                        order_sync_by: "amaze"
+                        order_id: "a90af6e9-cb66-4e1a-a015-00ca0bd2d020"
+                        order_number: "AMZ-ORD-00001"
+                        order_packages:
+                          - order_package_number: "AMZ-ORD-00001-1"
+                            status: "in_progress"
+                            message: ""
+                        message: ""
+                      - job_id: "25d410f3-faab-410b-9267-e6c2ef70defa"
+                        status: "completed"
+                        order_sync_type: "create"
+                        order_sync_by: "amaze"
+                        order_id: "a9b3a360-2104-4f57-a141-9286c5a3dfef"
+                        order_number: "AMZ-ORD-00002"
+                        order_packages:
+                          - order_package_number: "AMZ-ORD-00002-1"
+                            status: "completed"
+                            message: ""
+                          - order_package_number: "AMZ-ORD-00002-2"
+                            status: "in_progress"
+                            message: ""
+                        message: ""
+                      - job_id: "7a8b354b-c8eb-422c-9f8e-132eed1807a3"
+                        status: "skipped"
+                        order_sync_type: "create"
+                        order_sync_by: "amaze"
+                        order_id: "e955b178-a0ed-420c-b7a2-f5ee8236aa11"
+                        order_number: "AMZ-ORD-00003"
+                        order_packages:
+                          - order_package_number: "AMZ-ORD-00003-1"
+                            status: "skipped"
+                            message: "this order is already created in ZORT"
+                        message: "this order is already created in ZORT"
+                    page: 1
+                    total_items: 30
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    put:
+      summary: Submit job manually for order sync.
+      description: |
+        Submit job_id manually for order sync if not unsuccessful.
+      tags:
+        - Job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepairJobOrderRequest'
+            examples:
+              example:
+                summary: Job submission example
+                value:
+                  job_id: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
+      responses:
+        '200':
+          description: Job submitted successfully. Check `code` and `data` for results.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+              examples:
+                success:
+                  summary: Successful job submission
+                  value:
+                    code: "2000"
+                    message: "Success"
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -151,10 +404,8 @@ paths:
 
   /order:
     post:
-      summary: Create order to ZORT by order ID from Amaze
-      description: |
-        Creates an order in ZORT using the order ID from Amaze. Returns the order number if successful.
-        This endpoint is used to create orders in ZORT based on the order ID received from Amaze.
+      summary: Get order number by order ID
+      description: Returns the order number for a given order ID.
       tags:
         - Order
       requestBody:
@@ -181,6 +432,49 @@ paths:
                   value:
                     code: "0000"
                     message: "Success"
+                    data:
+                      order_number: "zz-ord-00001"
+                      package_number:
+                        - "AMZ-ORD-00001-1"
+                        - "AMZ-ORD-00001-2"
+                      job_id: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    put:
+      summary: Update order status
+      description: Updates the status of an order by order ID.
+      tags:
+        - Order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderUpdateRequest'
+            examples:
+              example:
+                summary: Example order status update
+                value:
+                  order_id: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
+                  status: "ready_to_ship"
+      responses:
+        '200':
+          description: Order status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+              examples:
+                success:
+                  summary: Successful order status update
+                  value:
+                    code: "0000"
+                    message: "Success"
+                    data:
+                      order_number: "zz-ord-00001"
+                      job_id: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -248,6 +542,13 @@ components:
           type: string
           description: Message describing the sync result
           example: Success
+        data:
+          type: object
+          properties:
+            job_id:
+              type: string
+              description: Unique identifier for the sync job, using for tracking job progress
+              example: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
 
     StockUpdateRequest:
       type: object
@@ -302,7 +603,199 @@ components:
           type: string
           example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
 
+    OrderUpdateRequest:
+      type: object
+      required:
+        - order_id
+        - status
+      properties:
+        order_id:
+          type: string
+          example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
+        status:
+          type: string
+          example: ready_to_ship
+
     OrderResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "0000"
+        message:
+          type: string
+          example: Success
+        data:
+          type: object
+          properties:
+            order_number:
+              type: string
+              example: zz-ord-00001
+            package_number:
+              type: array
+              items:
+                type: string
+              example:
+                - AMZ-ORD-00001-1
+                - AMZ-ORD-00001-2
+            job_id:
+              type: string
+              example: "362cff97-ccc3-4e2d-a2d2-0b4dad537dac"
+    
+    GetProductSyncJobResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "0000"
+        message:
+          type: string
+          example: Success
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              job_id:
+                type: string
+                example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
+              status:
+                type: string
+                enum: [pending, in_progress, completed, failed]
+                example: in_progress
+              total:
+                type: integer
+                example: 10
+              pending:
+                type: integer
+                example: 4
+              in_progress:
+                type: integer
+                example: 1
+              failed:
+                type: integer
+                example: 2
+              completed:
+                type: integer
+                example: 3
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    product_id:
+                      type: string
+                      example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
+                    status:
+                      type: string
+                      enum: [pending, in_progress, completed, failed]
+                      example: in_progress
+                    total:
+                      type: integer
+                      example: 2
+                    pending:
+                      type: integer
+                      example: 0
+                    in_progress:
+                      type: integer
+                      example: 0
+                    failed:
+                      type: integer
+                      example: 2
+                    completed:
+                      type: integer
+                      example: 0
+                    model_list:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          product_number:
+                            type: string
+                            example: P0001
+                          message:
+                            type: string
+                            example: error while sync to ZORT
+              message:
+                type: string
+                example: message if error
+        page:
+          type: integer
+          example: 1
+        total_items:
+          type: integer
+          example: 100
+    
+    RepairJobProductSyncRequest:
+      type: object
+      required:
+        - job_id
+      properties:
+        job_id:
+          type: string
+          example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
+    
+    GetOrderJobResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "0000"
+        message:
+          type: string
+          example: Success
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              order_id:
+                type: string
+                example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
+              order_number:
+                type: string
+                example: zz-ord-00001
+              status:
+                type: string
+                enum: [pending, in_progress, completed, failed, skipped]
+                example: in_progress
+              order_sync_type:
+                type: string
+                enum: [create, updateorder, updateordertracking, returnorder]
+                example: create
+              order_sync_by:
+                type: string
+                enum: [amaze, zort]
+                example: amaze
+              order_packages:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    order_package_number:
+                      type: string
+                      example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
+                    status:
+                      type: string
+                      enum: [pending, in_progress, completed, failed, skipped]
+                      example: in_progress
+                    message:
+                      type: string
+                      example: message if error
+              message:
+                type: string
+                example: message if error
+    
+    RepairJobOrderRequest:
+      type: object
+      required:
+        - job_id
+      properties:
+        job_id:
+          type: string
+          example: 362cff97-ccc3-4e2d-a2d2-0b4dad537dac
+
+    JobResponse:
       type: object
       properties:
         code:
