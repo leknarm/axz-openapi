@@ -206,6 +206,13 @@ paths:
         Submit job_id manually for product sync if not unsuccessful.
       tags:
         - Job
+      parameters:
+      - in: header
+        name: x-shop-id
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the shop requesting the product resync  
       requestBody:
         required: true
         content:
@@ -331,6 +338,13 @@ paths:
         Submit job_id manually for order sync if not unsuccessful.
       tags:
         - Job
+      parameters:
+      - in: header
+        name: x-shop-id
+        required: true
+        schema:
+          type: string
+        description: Unique identifier for the shop requesting the order resync  
       requestBody:
         required: true
         content:
